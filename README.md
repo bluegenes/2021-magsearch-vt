@@ -1,4 +1,4 @@
-#2021-goi-magsearch
+# 2021-magsearch-vt
 
-Download and sketch genomes of interest.
-Conduct MAG search.
+For species of interest, download genomes and sketch to prepare for MAG Search.
+
