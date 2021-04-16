@@ -1,5 +1,5 @@
-outdir: outputs.download_and_sketch
-basename: boris-genomes
+outdir: output.download_and_sketch
+basename: pl-genomes
 
 taxa:
   - 'Pantoea_dispersa' #1440057  

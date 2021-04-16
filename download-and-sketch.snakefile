@@ -8,7 +8,7 @@ import re
 import pandas as pd
 
 configfile: "prep_magsearch.yml"
-out_dir = "outputs.download_and_sketch"
+out_dir = config['outdir']
 logs_dir = os.path.join(out_dir, "logs")
 taxon_info = config["taxa"]
 basename = config["basename"]
@@ -142,5 +142,7 @@ rule signames_to_file:
     run:
         with open(str(output), "w") as outF:
             for inF in input.sigs:
-                outF.write(str(inF) + "\n")
+                full_filename = os.path.abspath(str(inF))
+                #outF.write(str(inF) + "\n")
+                outF.write(full_filename + "\n")
 

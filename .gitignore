@@ -1,4 +1,5 @@
 *csv
-outputs.*
+output.*
 .snakemake
 scripts/ncbi-datasets
+slurm-logs

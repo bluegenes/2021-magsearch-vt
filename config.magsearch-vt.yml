@@ -1,6 +1,7 @@
-query_name: boris_pl
-query_sigs: /home/ntpierce/2021-magsearch-vt/outputs.download_and_sketch/signatures
+query_name: pl-genomes
+query_sigs: /home/ntpierce/2021-magsearch-vt/output.download_and_sketch/pl-genomes.siglist.txt
 wort_sigs: /group/ctbrowngrp/irber/data/wort-data/wort-sra/sigs
 s3_dir: outputs/wort-sra/sigs
 threshold: 0.01
 ksize: 21
+out_dir: "output.magsearch"
