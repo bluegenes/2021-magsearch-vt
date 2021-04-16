@@ -1,0 +1,9 @@
+outdir: outputs.download_and_sketch
+basename: boris-genomes
+
+taxa:
+  - 'Pantoea_dispersa' #1440057  
+  - 'Lysinibacillus_parviboronicapiens' #436516
+
+ksize: [21,31,51]
+scaled: 1000

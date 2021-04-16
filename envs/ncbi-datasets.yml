@@ -1,0 +1,11 @@
+name: ncbi-datasets
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.8
+  - pandas==1.2.1
+  - pip
+  - pip:
+    - ncbi-datasets-pylib==11.13.3

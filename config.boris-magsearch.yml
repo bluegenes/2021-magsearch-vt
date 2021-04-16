@@ -1,0 +1,6 @@
+query_name: boris_pl
+query_sigs: /home/ntpierce/2021-magsearch-vt/outputs.download_and_sketch/signatures
+wort_sigs: /group/ctbrowngrp/irber/data/wort-data/wort-sra/sigs
+s3_dir: outputs/wort-sra/sigs
+threshold: 0.01
+ksize: 21

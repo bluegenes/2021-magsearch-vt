@@ -1,0 +1,4 @@
+*csv
+outputs.*
+.snakemake
+scripts/ncbi-datasets
