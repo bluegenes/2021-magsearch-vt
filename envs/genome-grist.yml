@@ -1,0 +1,11 @@
+name: genome-grist
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.8
+  - pip
+  - pip:
+    #- git+https://github.com/KoslickiLab/mutation-rate-ci-calculator@master
+    - git+https://github.com/dib-lab/genome-grist@add/prefetch_cli

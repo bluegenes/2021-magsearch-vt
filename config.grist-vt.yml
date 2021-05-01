@@ -1,0 +1,13 @@
+outdir: output.genome-grist
+basename: pl-genomes
+
+query_genomes_siglist: /home/ntpierce/2021-magsearch-vt/output.download_and_sketch/pl-genomes.siglist.txt
+metagenome_list: /home/ntpierce/2021-magsearch-vt/output.magsearch/processed_results/ms31_c50.unique-metagenomes.txt
+
+# genome-grist configuration
+metagenome_trim_memory: 1e9
+ksize:
+  - 21
+  - 31
+  - 51
+

@@ -49,8 +49,8 @@ rule search:
   params:
     threshold = config.get("threshold", 0.01),
     ksize = config.get("ksize", 31)
-  log: f"{config['out_dir']}/logs/sra_search.log"
-  benchmark: f"{config['out_dir']}/logs/sra_search.benchmark"
+  log: f"{config['out_dir']}/logs/sra_search.k{config['ksize']}.log"
+  benchmark: f"{config['out_dir']}/logs/sra_search.k{config['ksize']}.benchmark"
   threads: 32
   resources: 
      mem_mb=lambda wildcards, attempt: attempt * 50000,
