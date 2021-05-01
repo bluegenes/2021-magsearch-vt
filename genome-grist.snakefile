@@ -53,7 +53,10 @@ rule write_grist_config:
             out.write(f"sample:\n")
             for mg in metagenomes:
                 out.write(f"  - {mg}\n")
-            out.write(f"ksize:\n")
+            out.write(f"sourmash_database_ksize:\n")
+            for k in params.ksize:
+                out.write(f"  - {k}\n")
+            out.write(f"sourmash_compute_ksizes:\n")
             for k in params.ksize:
                 out.write(f"  - {k}\n")
 
