@@ -41,7 +41,7 @@ rule write_grist_config:
     input: 
         database=os.path.join(out_dir, "databases", "{basename}.zip"),
         metagenomes=config["metagenome_list"],
-    output: os.path.join(out_dir, "config.{basename}.grist")
+    output: os.path.join(out_dir, "config.grist.{basename}.yml")
     params:
         metagenome_trim_memory=config.get("metagenome_trim_memory", "1e9"),
         ksize=ksize
@@ -54,38 +54,72 @@ rule write_grist_config:
             for mg in metagenomes:
                 out.write(f"  - {mg}\n")
             out.write(f"sourmash_database_ksize:\n")
-            for k in params.ksize:
+            for k in params.search_ksize:
                 out.write(f"  - {k}\n")
             out.write(f"sourmash_compute_ksizes:\n")
             for k in params.ksize:
                 out.write(f"  - {k}\n")
 
 
-rule run_genome_grist:
-    input:  os.path.join(out_dir, f"config.{basename}.grist")
-    output: expand(os.path.join(out_dir, "reports/report-{sample}.html"), sample=metagenomes)
-    conda: "envs/genome-grist.yml"
-    #threads: 16
-    threads: 1
-    resources: 
+### temporarily split genome grist into multiple rules so I can use PR's with auto temp dir deletion and fastp trimming :)
+rule run_genome_grist_download:
+    input:
+        config=os.path.join(out_dir, f"config.grist.{basename}.yml"),
+    output:
+        r1=protected(expand(os.path.join(out_dir, "raw/{sample}_1.fastq.gz"), sample=metagenomes)),
+        r2=protected(expand(os.path.join(out_dir, "raw/{sample}_2.fastq.gz"), sample=metagenomes)),
+    conda: "envs/genome-grist-temp.yml"
+    threads: 16
+    resources:
         #mem_mb=lambda wildcards, attempt: attempt*145000
-        mem_mb=20000
+        mem_mb=50000
     shell:
         """
-        genome-grist run {input} --resources mem_mb=145000 -j {threads} summarize
+        genome-grist run {input.config} --resources mem_mb={resources.mem_mb} -j {threads} download_reads --nolock -p
+        """
+
+rule run_genome_grist_trim:
+    input:
+        config=os.path.join(out_dir, f"config.grist.{basename}.yml"),
+        r1=ancient(expand(os.path.join(out_dir, "raw/{sample}_1.fastq.gz"), sample=metagenomes)),
+        r2=ancient(expand(os.path.join(out_dir, "raw/{sample}_2.fastq.gz"), sample=metagenomes)),
+    output: interleaved=protected(expand(os.path.join(out_dir, "abundtrim/{sample}.abundtrim.fq.gz"), sample=metagenomes)),
+    conda: "envs/genome-grist-fastp.yml"
+    threads: 16
+    resources:
+        #mem_mb=lambda wildcards, attempt: attempt*145000
+        mem_mb=50000
+    shell:
+        """
+        genome-grist run {input.config} --resources mem_mb={resources.mem_mb} -j {threads} trim_reads  --nolock -p
+        """
+
+rule run_genome_grist_summarize:
+    input:
+        config=os.path.join(out_dir, f"config.grist.{basename}.yml"),
+        interleaved=ancient(expand(os.path.join(out_dir, "abundtrim/{sample}.abundtrim.fq.gz"), sample=metagenomes)),
+    output: expand(os.path.join(out_dir, "reports/report-{sample}.html"), sample=metagenomes)
+    conda: "envs/genome-grist.yml"
+    threads: 16
+    resources:
+        #mem_mb=lambda wildcards, attempt: attempt*145000
+        mem_mb=50000
+    shell:
+        """
+        genome-grist run {input.config} --resources mem_mb={resources.mem_mb} -j {threads} summarize --nolock -p
         """
 
 localrules: zip_genome_grist
 rule zip_genome_grist:
     input:
         config=os.path.join(out_dir, "config.{basename}.grist"),
-        results=rules.run_genome_grist.output
+        results=rules.run_genome_grist_summarize.output
     output: os.path.join(out_dir, "{basename}.results.zip")
     params: 
         temp_zip = os.path.join(out_dir, "transfer.zip")
     conda: "envs/genome-grist.yml"
     shell:
         """
-        genome-grist run {input.config} zip 
+        genome-grist run {input.config} zip --nolock -p
         mv {params.temp_zip} {output}
         """

@@ -10,4 +10,5 @@ ksize:
   - 21
   - 31
   - 51
-
+search_ksize:
+  - 31
