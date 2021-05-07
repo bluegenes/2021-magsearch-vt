@@ -4,3 +4,5 @@ output.*
 scripts/ncbi-datasets
 slurm-logs
 notebooks/.ipynb_checkpoints/
+*/
+*zip
