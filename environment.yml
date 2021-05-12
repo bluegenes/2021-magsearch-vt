@@ -8,4 +8,5 @@ dependencies:
   - snakemake=6.1.0
   - pandas=1.2.3
   - seaborn=0.11.0
+  - jupyterlab
   - screed
