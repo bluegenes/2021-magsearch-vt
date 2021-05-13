@@ -1,4 +1,4 @@
-name: test-magsearch
+name: vt-magsearch
 channels:
   - conda-forge
   - bioconda
