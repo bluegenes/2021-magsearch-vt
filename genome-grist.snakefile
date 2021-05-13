@@ -15,8 +15,7 @@ basename = config["basename"]
 metagenome_list = config["metagenome_list"]
 metagenomes = [x.rstrip() for x in open(metagenome_list, "r")]
 
-# go past first one, which was already downloaded and processed
-metagenomes = metagenomes[1:]
+metagenomes = metagenomes
 
 rule all:
     input: 
@@ -73,29 +72,14 @@ rule run_genome_grist_download:
         mem_mb=50000
     shell:
         """
-        genome-grist run {input.config} --resources mem_mb={resources.mem_mb} -j {threads} download_reads --nolock -p
-        """
-
-rule run_genome_grist_trim:
-    input:
-        config=os.path.join(out_dir, f"config.grist.{basename}.yml"),
-        r1=ancient(expand(os.path.join(out_dir, "raw/{sample}_1.fastq.gz"), sample=metagenomes)),
-        r2=ancient(expand(os.path.join(out_dir, "raw/{sample}_2.fastq.gz"), sample=metagenomes)),
-    output: interleaved=expand(os.path.join(out_dir, "abundtrim/{sample}.abundtrim.fq.gz"), sample=metagenomes),
-    conda: "envs/genome-grist-fastp.yml"
-    threads: 16
-    resources:
-        #mem_mb=lambda wildcards, attempt: attempt*145000
-        mem_mb=50000
-    shell:
-        """
-        genome-grist run {input.config} --resources mem_mb={resources.mem_mb} -j {threads} trim_reads  --nolock -p
+        genome-grist run {input.config} --resources mem_mb={resources.mem_mb} -j {threads} download_reads --nolock --profile default
         """
 
 rule run_genome_grist_summarize:
     input:
         config=os.path.join(out_dir, f"config.grist.{basename}.yml"),
-        interleaved=ancient(expand(os.path.join(out_dir, "abundtrim/{sample}.abundtrim.fq.gz"), sample=metagenomes)),
+        r1=expand(os.path.join(out_dir, "raw/{sample}_1.fastq.gz"), sample=metagenomes),
+        r2=expand(os.path.join(out_dir, "raw/{sample}_2.fastq.gz"), sample=metagenomes),
     output: expand(os.path.join(out_dir, "reports/report-{sample}.html"), sample=metagenomes)
     conda: "envs/genome-grist.yml"
     threads: 16
@@ -104,7 +88,7 @@ rule run_genome_grist_summarize:
         mem_mb=50000
     shell:
         """
-        genome-grist run {input.config} --resources mem_mb={resources.mem_mb} -j {threads} summarize --nolock -p
+        genome-grist run {input.config} --resources mem_mb={resources.mem_mb} -j {threads} summarize --nolock --profile default
         """
 
 localrules: zip_genome_grist
