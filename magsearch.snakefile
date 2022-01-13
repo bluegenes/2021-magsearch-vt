@@ -4,6 +4,7 @@ Source: /group/ctbrowngrp/irber/sra_search/Snakefile
 snakemake -s magsearch.snakefile --profile farm --cluster-config cluster_config.yml --jobs 32 --restart-times 1
 """
 
+#configfile: "config.magsearch-vt.yml"
 configfile: "config.magsearch-vt.yml"
 
 rule all:
@@ -11,19 +12,21 @@ rule all:
       f"{config['out_dir']}/results/{config['query_name']}.csv"
 
 
-rule catalog_all:
-  output: "/group/ctbrowngrp/irber/sra_search/catalogs/all_wort_sigs"
-  shell: "find {config[wort_sigs]} -type f -iname '*.sig' > {output}"
+#rule catalog_all:
+#  output: "/group/ctbrowngrp/irber/sra_search/catalogs/all_wort_sigs"
+#  shell: "find {config[wort_sigs]} -type f -iname '*.sig' > {output}"
 
 rule catalog_metagenomes:
-  output: "/group/ctbrowngrp/irber/sra_search/catalogs/metagenomes"
+  #output: "/group/ctbrowngrp/irber/sra_search/catalogs/metagenomes"
+  output: "/group/ctbrowngrp/sra_search/catalogs/metagenomes"
   run:
     import csv
     from pathlib import Path
 
     sraids = set(Path("/group/ctbrowngrp/irber/sra_search/inputs/mash_sraids.txt").read_text().split('\n'))
 
-    with open("/group/ctbrowngrp/irber/sra_search/inputs/metagenomes_source-20210416.csv") as fp:
+    #with open("/group/ctbrowngrp/irber/sra_search/inputs/metagenomes_source-20210416.csv") as fp:
+    with open("/home/ntpierce/2021-magsearch-vt/metagenomes_source_20220104.csv") as fp:
       data = csv.DictReader(fp, delimiter=',')
       for dataset in data:
         sraids.add(dataset['Run'])
@@ -44,7 +47,8 @@ rule search:
   output: f"{config['out_dir']}/results/{config['query_name']}.csv"
   input:
     queries = config["query_sigs"],
-    catalog = "/group/ctbrowngrp/irber/sra_search/catalogs/metagenomes",
+    #catalog = "/group/ctbrowngrp/irber/sra_search/catalogs/metagenomes",
+    catalog = "/group/ctbrowngrp/sra_search/catalogs/metagenomes",
     bin = "/group/ctbrowngrp/irber/sra_search/bin/sra_search"
   params:
     threshold = config.get("threshold", 0.01),

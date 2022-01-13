@@ -1,0 +1,11 @@
+outdir: output.v2.download_and_sketch
+basename: vt-genomes.v2
+
+accession_info: Pantoea_genomes_to_use_as_query_KC_added_4_missing_strains.csv
+
+#taxa:
+#  - 'Pantoea_dispersa' #1440057  
+#  - 'Lysinibacillus_parviboronicapiens' #436516
+
+ksize: [21,31,51]
+scaled: 1000
