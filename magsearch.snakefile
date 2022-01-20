@@ -55,9 +55,9 @@ rule search:
     ksize = config.get("ksize", 31)
   log: f"{config['out_dir']}/logs/sra_search.k{config['ksize']}.log"
   benchmark: f"{config['out_dir']}/logs/sra_search.k{config['ksize']}.benchmark"
-  threads: 32
+  threads: 36
   resources: 
-     mem_mb=lambda wildcards, attempt: attempt * 50000,
+     mem_mb=lambda wildcards, attempt: attempt * 60000,
      #runtime= 720, # 12 hours
   shell: """
     export RAYON_NUM_THREADS={threads}
